@@ -1,0 +1,24 @@
+package com.remoteyourcam.usb.ptp.commands;
+
+import com.remoteyourcam.usb.ptp.PtpCamera;
+import com.remoteyourcam.usb.ptp.PtpCamera.IO;
+import com.remoteyourcam.usb.ptp.PtpConstants.Operation;
+import com.remoteyourcam.usb.ptp.PtpConstants.Response;
+import java.nio.ByteBuffer;
+
+public class InitiateCaptureCommand extends Command {
+    public InitiateCaptureCommand(PtpCamera ptpCamera) {
+        super(ptpCamera);
+    }
+
+    public void encodeCommand(ByteBuffer byteBuffer) {
+        encodeCommand(byteBuffer, Operation.InitiateCapture, 0, 0);
+    }
+
+    public void exec(IO io) {
+        io.handleCommand(this);
+        if (this.responseCode == Response.DeviceBusy) {
+            this.camera.onDeviceBusy(this, true);
+        }
+    }
+}
